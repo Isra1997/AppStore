@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">        
+    </head>
+    <body> 
+        <!-- navbar -->
+        <%include ../partials/navbar%>
+        <br>
+        <div class="container">
+            <div class="row">
+             <div class="col-md-12">
+                <div class="jumbotron">
+                    <h1>Upload Overview</h1>
+                    <hr>
+                    <form method="POST" action="/add" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <!-- name -->
+                            <label>Name</label>
+                            <input type="text" class="form-control" name="NameInput" placeholder="Name" required>
+                            <small id="emailHelp" class="form-text text-muted">*Required</small>
+                        </div>
+                        <div class="form-group">
+                            <!-- Vendor -->
+                            <label>Vendor</label>
+                            <input type="text" class="form-control" name="VendorName" placeholder="Vendor Name" accept="" required>
+                            <small id="VendorHelp" class="form-text text-muted">*Required</small>
+                        </div>
+                        <div class="form-group">
+                            <!-- application file -->
+                            <label>Please Upload the exec file</label>
+                            <input type="file" class="form-control-file" name="execfilepath" accept=".exec" required>
+                        </div>
+                        <div class="form-group">
+                            <!-- application logo -->
+                            <labels>Please Upload the Application Logo</label>
+                            <input type="file" class="form-control-file" name="logofilepath" accept="image/*" required>
+                            <!-- <img src="<%=logopath%>" alt="<%=VendorName%>"> -->
+                        </div>
+                        <hr>
+                        <br>
+                        <button type="submit" class="btn btn-success btn-block" id="submituploaddata">Submit</button>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+            </div>
+         </div>
+        <!-- footer -->
+        <% include ../partials/footer %>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script>
+            $('#submituploaddata').click(function(){
+
+            });
+            //getting the file path and sending it to the server
+            $('#logofilepath').click(function(){
+
+            });
+        </script>
+    </body>
+</html>
