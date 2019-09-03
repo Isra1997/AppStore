@@ -69,6 +69,16 @@ app.get('/description/:id',function(req,res){
     res.render('DescriptionPage/desciptionpage.ejs',{appname:db[req.params.id].name,VendorNames:db[req.params.id].VendorName,FileSize:db[req.params.id].size,Imagepath:db[req.params.id].Imagepath})
 });
 
+//login page route
+app.get('/login',function(req,res){
+    res.render('LoginPage/loginpage.ejs')
+});
+
+//authinticate user
+app.get('/auth',function(req,res){
+    //authticate username and password
+})
+
 //download route
 app.post('/download/:todownloadurl',function(req,res){
     fs.readdir(__dirname+'/Applications',function(err,fileApp){
