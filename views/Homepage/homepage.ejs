@@ -1,6 +1,6 @@
 
        <% include ../partials/navbar%>
-        <br>
+    <br>
       <div class="container">
           <!-- start -->
           <div class="row">
@@ -14,7 +14,7 @@
                             <button  class="btn btn-outline-success btn-lg btn-block" name='download' type="submit"><i class="fa fa-download"></i> Download</button>
                             <br>
                             </form>
-                            <button class="btn btbtn btn-secondary btn-lg btn-block" id="describe">Description</button>
+                            <button class="btn btbtn btn-secondary btn-lg btn-block" onclick="window.location='/description/<%= i%>'" name="<%= i%>">Description</button>
 
                     </div>
                 </div>
@@ -28,8 +28,5 @@
       
       <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
       <script>
-         $('#describe').click(function(){
-            window.location='/description';
-         });
       </script>
       <% include ../partials/footer %>

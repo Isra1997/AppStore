@@ -5,8 +5,8 @@ var path = require('path');
 var fs=require('fs');
 app=express();
 var filecounter=0;
-var names=[];
-var VendorNames=[];
+var db=[];
+
 
 //creating a public directory to access specfic resourses
 var publicDir=require('path').join(__dirname,'/Public');
@@ -18,7 +18,7 @@ app.set('view engine', 'ejs');
 
 // home page route
 app.get('/',function(req,res){
-    res.render('UploadPage/uploadpage',{messageexec:'',messagelogo:'',logopath:'',VendorName:''});
+    res.render('UploadPage/uploadpage');
 });
 
 //upload page route
@@ -27,8 +27,13 @@ app.post('/add',function(req,res){
    
   filecounter++;
    form.parse(req,function(err,fields,files){
-       names.push(fields.NameInput);
-       VendorNames.push(fields.VendorName);
+       var execDe={
+           name:fields.NameInput,
+           VendorName:fields.VendorName,
+           size:files.execfilepath.size,
+           Imagepath:'/ImagesUploaded/' + filecounter+files.logofilepath.name
+       };
+       db.push(execDe);
    });
 
    form.on('fileBegin',function(name,file){
@@ -53,14 +58,15 @@ app.get('/home',function(req,res){
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         } 
-        res.render('Homepage/homepage.ejs',{fileImageArray:files,NameArray:names,VendorName:VendorNames});
+        res.render('Homepage/homepage.ejs',{fileImageArray:files});
     });
     
 });
 
 //description route
-app.get('/description',function(req,res){
-    res.end("Hello Description :)");
+app.get('/description/:id',function(req,res){
+    console.log(db);
+    res.render('DescriptionPage/desciptionpage.ejs',{Username:db[req.params.id].name,VendorNames:db[req.params.id].VendorName,FileSize:db[req.params.id].size,Imagepath:db[req.params.id].Imagepath})
 });
 
 //download route
