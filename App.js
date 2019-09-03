@@ -5,6 +5,8 @@ var path = require('path');
 var fs=require('fs');
 app=express();
 var filecounter=0;
+var names=[];
+var VendorNames=[];
 
 //creating a public directory to access specfic resourses
 var publicDir=require('path').join(__dirname,'/Public');
@@ -25,8 +27,8 @@ app.post('/add',function(req,res){
    
   filecounter++;
    form.parse(req,function(err,fields,files){
-       var Name=fields.NameInput;
-       var VendorName=fields.VendorName;
+       names.push(fields.NameInput);
+       VendorNames.push(fields.VendorName);
    });
 
    form.on('fileBegin',function(name,file){
@@ -51,8 +53,7 @@ app.get('/home',function(req,res){
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         } 
-        res.render('Homepage/homepage.ejs',{fileImageArray:files});
-
+        res.render('Homepage/homepage.ejs',{fileImageArray:files,NameArray:names,VendorName:VendorNames});
     });
     
 });
@@ -66,8 +67,6 @@ app.post('/download/:todownloadurl',function(req,res){
         var filePath=__dirname+'/Applications/'+fileApp[req.params.todownloadurl];
         res.download(filePath);
     });
-   
-   
 });
 
 app.listen(3000);
