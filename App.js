@@ -66,7 +66,7 @@ app.get('/home',function(req,res){
 //description route
 app.get('/description/:id',function(req,res){
     console.log(db);
-    res.render('DescriptionPage/desciptionpage.ejs',{Username:db[req.params.id].name,VendorNames:db[req.params.id].VendorName,FileSize:db[req.params.id].size,Imagepath:db[req.params.id].Imagepath})
+    res.render('DescriptionPage/desciptionpage.ejs',{appname:db[req.params.id].name,VendorNames:db[req.params.id].VendorName,FileSize:db[req.params.id].size,Imagepath:db[req.params.id].Imagepath})
 });
 
 //download route
