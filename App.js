@@ -58,6 +58,11 @@ app.get('/home',function(req,res){
     
 });
 
+//description route
+app.get('/description',function(req,res){
+    res.end("Hello Description :)");
+});
+
 //download route
 app.post('/download/:todownloadurl',function(req,res){
     fs.readdir(__dirname+'/Applications',function(err,fileApp){
@@ -68,6 +73,8 @@ app.post('/download/:todownloadurl',function(req,res){
         res.download(filePath);
     });
 });
+
+
 
 app.listen(3000);
 
