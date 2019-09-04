@@ -65,6 +65,16 @@ app.get('/home',function(req,res){
     });
 });
 
+//login page route
+app.get('/login',function(req,res){
+    res.render('LoginPage/loginpage.ejs')
+});
+
+//authinticate user
+app.get('/auth',function(req,res){
+    //authticate username and password
+})
+
 //download route
 app.get('/download/:id',function(req,res){
     fs.readdir(__dirname+'/Applications',function(err,fileApp){
