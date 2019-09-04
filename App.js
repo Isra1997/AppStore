@@ -78,7 +78,7 @@ app.post('/download/:id',function(req,res){
             return console.log('Unable to scan directory: ' + err);
         }  
         //access filepath
-        var filePath=db[req.params.id].Filepath;
+        var filePath=__dirname+db[req.params.id].Filepath;
         //increment number of downloads
         db[req.params.id].numD++;
         res.download(filePath);

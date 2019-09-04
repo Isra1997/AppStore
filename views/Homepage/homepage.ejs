@@ -14,7 +14,6 @@
           <!-- start -->
           <div class="row">
          <% for(var i=0;i<fileImageArray.length;i++){%>
-             <!--  -->
              <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100">
                       <a href="#"><img class="card-img-top" src="/ImagesUploaded/<%= fileImageArray[i]%>" alt=""></a>
@@ -22,28 +21,13 @@
                         <h4 class="card-title">
                           <%= appArray[i].name%>
                         </h4>
-                        <p class="card-text">Vendor Name:<%= appArray[i].VendorName%> <br>Size: <%=appArray[i].size%><br>Number of Downloads: <%= appArray[i].numD%></p>
+                        <p class="card-text">Vendor Name: <%= appArray[i].VendorName%> <br>Size: <%=appArray[i].size%><br>Number of Downloads: <%= appArray[i].numD%></p>
                       </div>
                       <div class="card-footer">
                         <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
                       </div>
                     </div>
               </div>
-             <!--  -->
-            <div class="col-md-4" name="clickz" id='<%= i%>'>
-                <div class="jumbotron" name="describe">  
-                        <img src="/ImagesUploaded/<%= fileImageArray[i]%>" class="img-fluid">
-                    <hr>
-                    <div class="mx-aut0">
-                            <form action="/download/<%=i%>" method="post">
-                            <button  class="btn btn-outline-success btn-lg btn-block" name='download' type="submit"><i class="fa fa-download"></i> Download</button>
-                            <br>
-                            </form>
-                            <button class="btn btbtn btn-secondary btn-lg btn-block" onclick="window.location='/description/<%= i%>'" name="<%= i%>">Description</button>
-
-                    </div>
-                </div>
-            </div>
         <%}%>
         <!-- end -->
         </div>
