@@ -1,9 +1,13 @@
 <!-- navbar -->
 <%include ../partials/navbar%>
+<br>
+<br>
+<br>
 <div class="container">
-      <div class="h-100 row align-items-center">
-              <div class="col">
-                  <p class="lead" style="margin-left: 30%">Welcome to the share appliction website please login!</p>
+      <div class="h-100 row justify-content-center">
+                
+              <div class="col-6">
+                <p class="lead" style="margin-left: 9%;">Welcome to the share appliction website please login!</p>
                   <br>
                   <div class="jumbotron">
                       <form method="POST" action="/auth" enctype="multipart/form-data">
@@ -20,7 +24,11 @@
                                 <small id="VendorHelp" class="form-text text-muted">*Required</small>
                         </div>
                         <!-- login button -->
-                        <button type="submit" class="btn btn-success btn-block" id="Login">Login</button>
+                        <div class="row justify-content-center">
+                        <div class="col-6">
+                           <button type="submit" class="btn btn-secondary btn-block" id="Login">Login</button>
+                        </div>
+                        </div>
                       </form>
                   </div>
               </div>
