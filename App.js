@@ -16,7 +16,7 @@ app.use(express.static(publicDir));
 //set the view engine to be ejs
 app.set('view engine', 'ejs');
 
-// home page route
+//upload page route
 app.get('/',function(req,res){
     res.render('UploadPage/uploadpage');
 });
