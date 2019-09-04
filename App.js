@@ -27,11 +27,14 @@ app.post('/add',function(req,res){
    
   filecounter++;
    form.parse(req,function(err,fields,files){
+
        var execDe={
            name:fields.NameInput,
            VendorName:fields.VendorName,
            size:files.execfilepath.size,
-           Imagepath:'/ImagesUploaded/' + filecounter+files.logofilepath.name
+           numD: 0,
+           Imagepath:'/ImagesUploaded/' + filecounter+files.logofilepath.name,
+           Filepath:'/Applications/'+filecounter+'.exec'
        };
        db.push(execDe);
    });
@@ -58,24 +61,26 @@ app.get('/home',function(req,res){
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         } 
-        res.render('Homepage/homepage.ejs',{fileImageArray:files});
+        res.render('Homepage/homepage.ejs',{fileImageArray:files,appArray:db});
     });
-    
 });
 
 //description route
-app.get('/description/:id',function(req,res){
-    console.log(db);
-    res.render('DescriptionPage/desciptionpage.ejs',{appname:db[req.params.id].name,VendorNames:db[req.params.id].VendorName,FileSize:db[req.params.id].size,Imagepath:db[req.params.id].Imagepath})
-});
+// app.get('/description/:id',function(req,res){
+//     console.log(db);
+//     res.render('DescriptionPage/desciptionpage.ejs',{appname:db[req.params.id].name,VendorNames:db[req.params.id].VendorName,FileSize:db[req.params.id].size,Imagepath:db[req.params.id].Imagepath})
+// });
 
 //download route
-app.post('/download/:todownloadurl',function(req,res){
+app.post('/download/:id',function(req,res){
     fs.readdir(__dirname+'/Applications',function(err,fileApp){
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         }  
-        var filePath=__dirname+'/Applications/'+fileApp[req.params.todownloadurl];
+        //access filepath
+        var filePath=db[req.params.id].Filepath;
+        //increment number of downloads
+        db[req.params.id].numD++;
         res.download(filePath);
     });
 });
