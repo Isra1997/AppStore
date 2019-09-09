@@ -1,0 +1,40 @@
+<!-- navbar -->
+<%include ../partials/navbar%>
+<br>
+<br>
+<br>
+<div class="container">
+      <div class="h-100 row justify-content-center">
+                
+              <div class="col-6">
+                <p class="lead" style="margin-left: 9%;">Welcome to the share appliction website please login!</p>
+                  <br>
+                  <div class="jumbotron">
+                      <form method="POST" action="/auth" enctype="multipart/form-data">
+                        <!-- name -->
+                        <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" class="form-control" name="UsernameInput" placeholder="Username" required>
+                                <small id="emailHelp" class="form-text text-muted">*Required</small>
+                        </div>
+                        <!-- password -->
+                        <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" class="form-control" name="password" placeholder="Password"  required>
+                                <small id="VendorHelp" class="form-text text-muted">*Required</small>
+                        </div>
+                        <!-- login button -->
+                        <div class="row justify-content-center">
+                        <div class="col-6">
+                           <button type="submit" class="btn btn-secondary btn-block" id="Login">Login</button>
+                           <br>
+                           <a name="Register" href="/regeister" style="color: gray;margin-left: 60px;">Register Now!</a>
+                        </div>
+                        </div>
+                      </form>
+                  </div>
+              </div>
+      </div>
+</div>
+<!-- footer -->
+<% include ../partials/footer %>

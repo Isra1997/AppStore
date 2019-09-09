@@ -6,7 +6,11 @@ var fs=require('fs');
 app=express();
 var filecounter=0;
 var db=[];
-
+var MongoClient=require('mongoose');
+var execfilemodel=require('./src/execfileschema');
+var initDb=require('./src/database').initDb;
+var getDb=require('./src/database').getDb;
+var userSchema=require('./src/userSchema');
 
 //creating a public directory to access specfic resourses
 var publicDir=require('path').join(__dirname,'/Public');
@@ -24,19 +28,9 @@ app.get('/',function(req,res){
 //upload page route
 app.post('/add',function(req,res){
    var form=new formidable();
-   
   filecounter++;
    form.parse(req,function(err,fields,files){
-
-       var execDe={
-           name:fields.NameInput,
-           VendorName:fields.VendorName,
-           size:files.execfilepath.size,
-           numD: 0,
-           Imagepath:'/ImagesUploaded/' + filecounter+files.logofilepath.name,
-           Filepath:'/Applications/'+filecounter+'.exec'
-       };
-       db.push(execDe);
+       insertFile(fields.NameInput,fields.VendorName,files.execfilepath.size,0,filecounter+files.logofilepath.name,filecounter+'.exec',fields.catgory);
    });
 
    form.on('fileBegin',function(name,file){
@@ -57,41 +51,143 @@ app.post('/add',function(req,res){
 
 //home page route
 app.get('/home',function(req,res){
-    fs.readdir(publicDir+'/ImagesUploaded',function(err,files){
-        if (err) {
-            return console.log('Unable to scan directory: ' + err);
-        } 
-        res.render('Homepage/homepage.ejs',{fileImageArray:files,appArray:db});
+    queryAllFiles('execfiles').then((data)=>{
+        res.render('Homepage/homepage.ejs',{app:data});
     });
 });
 
 //login page route
 app.get('/login',function(req,res){
-    res.render('LoginPage/loginpage.ejs')
+    res.render('Login/loginpage.ejs')
 });
 
 //authinticate user
-app.get('/auth',function(req,res){
+app.post('/auth',function(req,res){
     //authticate username and password
 })
 
 //download route
-app.get('/download/:id',function(req,res){
+app.get('/download/:filepath/:id/:numD',function(req,res){
     fs.readdir(__dirname+'/Applications',function(err,fileApp){
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         }  
         //access filepath
-        var filePath=__dirname+db[req.params.id].Filepath;
+        var filePath=__dirname+'/Applications/'+req.params.filepath;
         //increment number of downloads
-        db[req.params.id].numD++;
+        var newD=parseInt(req.params.numD)+1;
+        updateNumberOfDownloads(req.params.id,newD);
+        // db[req.params.id].numD++;
         res.download(filePath);
     });
 });
 
+//description route
+app.get('/description',function(req,res){
+    res.render('DescriptionPage/desciptionpage.ejs',{Imagepath:"/ImagesUploaded/download(1).png",appname: "Micrsoft Office",VendorNames:"Micrsoft",FileSize:10})
+});
+
+//Games Catgory
+app.get('/games',function(req,res){
+    queryCatgory('Games').then((data)=>{
+        res.render('Homepage/homepage.ejs',{app:data});
+    })
+});
+
+//Mac Os catgory
+app.get('/MacOs',function(req,res){
+    queryCatgory('Mac Os Apps').then((data)=>{
+        res.render('Homepage/homepage.ejs',{app:data});
+    })
+});
+
+//Microsoft Office catgory
+app.get('/MicrosoftOffice',function(req,res){
+    queryCatgory('Microsoft Offices').then((data)=>{
+        res.render('Homepage/homepage.ejs',{app:data});
+    })
+});
+
+//Register Page route
+app.get("/regeister",function(req,res){
+    res.render('Login/RegisterPage.ejs');
+})
+
+app.post('/insertuser',function(req,res){
+    var form=new formidable();
+    form.parse(req,function(err,fields){
+        insertUser(fields.UsernameInput,fields.pwd).then(()=>{
+            res.render('Login/SuccessRegister.ejs')
+        })
+    })
+})
+
+                      // database functions
+
+//file insertion
+function insertFile(name,VendorName,size,numD,Imagepath,Filepath,Category){
+    let file= new execfilemodel({
+        Name:name,
+        VendorName:VendorName,
+        size:size,
+        numD:numD,
+        Imagepath:Imagepath,
+        Filepath:Filepath,
+        Comments:"",
+        Category:Category
+    });
+    file.save().then(doc =>{
+        console.log('record inserted');
+    }).catch( doc =>{
+        console.log(err)
+    })      
+}
+
+//query all files
+function queryAllFiles(){  
+   return execfilemodel.find({});
+}
+
+//query a specific string
+function queryCatgory(Catgory){
+    return execfilemodel.find({Category:Catgory});
+}
+
+//update the number of the downloads
+async function updateNumberOfDownloads(id,newnum){
+if(MongoClient.Types.ObjectId.isValid(id)){
+    let doc= await execfilemodel.findOneAndUpdate({_id:id},{numD:newnum},{new:true,
+        useFindAndModify:false});
+    doc= await execfilemodel.findOne({_id:id});
+    console.log(doc.numD);
+}
+else{
+    console.log('please enter a vaild Id');
+}
+
+}
+
+//user insertion
+function insertUser(username,password){
+    let user=new userSchema({
+        Username:username,
+        Password:password
+    })
+
+    return user.save();
+}
+
+//intializing the database connection and listing of the app's port (3000)
+initDb(function(err){
+    app.listen(3000,function(err){
+        if(err){
+            throw err;
+        }
+        console.log('application and database are up and running!');
+    })
+})
 
 
-app.listen(3000);
 
 
 

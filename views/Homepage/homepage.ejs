@@ -13,9 +13,9 @@
 
             <h1 class="my-4">Shop Name</h1>
             <div class="list-group">
-              <a href="#" class="list-group-item">Games</a>
-              <a href="#" class="list-group-item">Microsoft Office</a>
-              <a href="#" class="list-group-item">Mac OS Apps</a>
+              <a href="/games" class="list-group-item">Games</a>
+              <a href="/MicrosoftOffice" class="list-group-item">Microsoft Office</a>
+              <a href="/MacOs" class="list-group-item">Mac OS Apps</a>
             </div>
     
           </div>
@@ -54,18 +54,18 @@
                 </a>
               </div>
         <div class="row">
-         <% for(var i=0;i<fileImageArray.length;i++){%>
+         <% for(var i=0;i<app.length;i++){%>
              <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100">
-                      <a href="#"><img class="card-img-top" src="/ImagesUploaded/<%= fileImageArray[i]%>" alt=""></a>
+                      <a href="#"><img class="card-img-top" src="/ImagesUploaded/<%= app[i].Imagepath%>" alt=""></a>
                       <div class="card-body">
                         <h4 class="card-title">
-                          <%= appArray[i].name%>
+                          <%= app[i].Name%>
                         </h4>
-                        <p class="card-text">Vendor Name: <%= appArray[i].VendorName%> <br>Size: <%=appArray[i].size%><br>Number of Downloads: <%= appArray[i].numD%></p>
+                        <p class="card-text">Vendor Name: <%= app[i].VendorName%> <br>Size: <%=app[i].size%><br>Number of Downloads: <%= app[i].numD%><br> Catgory: <%= app[i].Category%></p>
                       </div>
                       <div class="card-footer">
-                        <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;<a href="/download/<%= i%>">   Download Now!</a></small>
+                        <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;<a href="/download/<%= app[i].Filepath%>/<%= app[i]._id%>/<%= app[i].numD%>" onclick="updateDownloads()">  Download Now!</a></small>
                       </div>
                     </div>
               </div>
@@ -79,4 +79,9 @@
       
     <br>
     <br>      
+    <script>
+      function updateDownloads(){
+
+      }
+    </script>
     <% include ../partials/footer %>
