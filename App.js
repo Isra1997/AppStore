@@ -6,19 +6,29 @@ var fs=require('fs');
 app=express();
 var filecounter=0;
 var db=[];
+
+//Database pages
 var MongoClient=require('mongoose');
 var execfilemodel=require('./src/execfileschema');
 var initDb=require('./src/database').initDb;
 var getDb=require('./src/database').getDb;
 var userSchema=require('./src/userSchema');
 
+
+//set the view engine to be ejs
+app.set('view engine', 'ejs');
+
 //creating a public directory to access specfic resourses
 var publicDir=require('path').join(__dirname,'/Public');
 app.use(express.static(publicDir));
 
 
-//set the view engine to be ejs
-app.set('view engine', 'ejs');
+app.use(parser.urlencoded({  extended : false }));
+app.use(parser.json());
+
+
+
+
 
 //upload page route
 app.get('/',function(req,res){
@@ -83,8 +93,10 @@ app.get('/download/:filepath/:id/:numD',function(req,res){
 });
 
 //description route
-app.get('/description',function(req,res){
-    res.render('DescriptionPage/desciptionpage.ejs',{Imagepath:"/ImagesUploaded/download(1).png",appname: "Micrsoft Office",VendorNames:"Micrsoft",FileSize:10})
+app.get('/card/:id',function(req,res){
+    queryId(req.params.id).then((data)=>{
+        res.render('DescriptionPage/desciptionpage.ejs',{CardDetails:data});
+    })
 });
 
 //Games Catgory
@@ -103,7 +115,8 @@ app.get('/MacOs',function(req,res){
 
 //Microsoft Office catgory
 app.get('/MicrosoftOffice',function(req,res){
-    queryCatgory('Microsoft Offices').then((data)=>{
+    queryCatgory('Microsoft Office').then((data)=>{
+        // console.log(data);
         res.render('Homepage/homepage.ejs',{app:data});
     })
 });
@@ -115,11 +128,22 @@ app.get("/regeister",function(req,res){
 
 app.post('/insertuser',function(req,res){
     var form=new formidable();
+    console.log('insert');
     form.parse(req,function(err,fields){
-        insertUser(fields.UsernameInput,fields.pwd).then(()=>{
-            res.render('Login/SuccessRegister.ejs')
-        })
+        insertUser(fields.UsernameInput,fields.pwd);
+        res.render('/home');
     })
+})
+
+// inserting a comment in the list
+app.post('/insertcomment/:id',function(req,res){
+    console.log('insert');
+    form.parse(req,function(err,fields){
+        insertComment(req.params.id, fields.cmt);
+    })  
+    queryAllFiles('execfiles').then((data)=>{
+        res.render('Homepage/homepage.ejs',{app:data});
+    });
 })
 
                       // database functions
@@ -133,7 +157,7 @@ function insertFile(name,VendorName,size,numD,Imagepath,Filepath,Category){
         numD:numD,
         Imagepath:Imagepath,
         Filepath:Filepath,
-        Comments:"",
+        Comments:[],
         Category:Category
     });
     file.save().then(doc =>{
@@ -148,9 +172,14 @@ function queryAllFiles(){
    return execfilemodel.find({});
 }
 
-//query a specific string
+//query a specific Category
 function queryCatgory(Catgory){
     return execfilemodel.find({Category:Catgory});
+}
+
+//query specific id
+function queryId(id){
+    return execfilemodel.find({_id:id});
 }
 
 //update the number of the downloads
@@ -164,7 +193,21 @@ if(MongoClient.Types.ObjectId.isValid(id)){
 else{
     console.log('please enter a vaild Id');
 }
+}
 
+//insert comments
+function insertComment(id,Comment){
+    execfilemodel.findByIdAndUpdate(id,
+        {$push: {Comments: Comment}},
+        {safe: true, upsert: true},
+        function(err, doc) {
+            if(err){
+            console.log(err);
+            }else{
+            console.log('Comment inserted Successfilly!')
+            }
+        }
+    );
 }
 
 //user insertion
@@ -186,6 +229,9 @@ initDb(function(err){
         console.log('application and database are up and running!');
     })
 })
+
+
+
 
 
 

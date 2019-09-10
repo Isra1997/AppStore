@@ -13,6 +13,7 @@
 
             <h1 class="my-4">Shop Name</h1>
             <div class="list-group">
+              <a href="/home" class="list-group-item">All apps</a>
               <a href="/games" class="list-group-item">Games</a>
               <a href="/MicrosoftOffice" class="list-group-item">Microsoft Office</a>
               <a href="/MacOs" class="list-group-item">Mac OS Apps</a>
@@ -54,9 +55,9 @@
                 </a>
               </div>
         <div class="row">
-         <% for(var i=0;i<app.length;i++){%>
+         <% for(var i=0;i<app.length;i++){%> 
              <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100">
+                    <div class="card h-100" onclick="Onclickcards('<%= app[i]._id%>')">
                       <a href="#"><img class="card-img-top" src="/ImagesUploaded/<%= app[i].Imagepath%>" alt=""></a>
                       <div class="card-body">
                         <h4 class="card-title">
@@ -65,7 +66,7 @@
                         <p class="card-text">Vendor Name: <%= app[i].VendorName%> <br>Size: <%=app[i].size%><br>Number of Downloads: <%= app[i].numD%><br> Catgory: <%= app[i].Category%></p>
                       </div>
                       <div class="card-footer">
-                        <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;<a href="/download/<%= app[i].Filepath%>/<%= app[i]._id%>/<%= app[i].numD%>" onclick="updateDownloads()">  Download Now!</a></small>
+                        <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;<a href="/download/<%= app[i].Filepath%>/<%= app[i]._id%>/<%= app[i].numD%>">  Download Now!</a></small>
                       </div>
                     </div>
               </div>
@@ -75,13 +76,12 @@
     </div>
     </div>
     </div>
-
-      
-    <br>
-    <br>      
     <script>
-      function updateDownloads(){
-
+      function Onclickcards(id){
+        window.location = '/card/'+id;
       }
     </script>
+    <br>
+    <br>      
+
     <% include ../partials/footer %>

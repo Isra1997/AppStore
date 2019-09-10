@@ -7,7 +7,7 @@ let execFileSchema=new mongoose.Schema({
     numD:Number,
     Imagepath:String,
     Filepath: String,
-    Comments: String,
+    Comments: [String],
     Category:String
 })
 
