@@ -1,7 +1,10 @@
 let mongoose=require('mongoose');
 
+
+
 let UserSchema= new mongoose.Schema({
     Username: String,
+    Email:String,
     Password: String
 })
 

@@ -1,3 +1,4 @@
+//Basic app sessions
 var express=require('express');
 var parser=require('body-parser');
 const formidable=require('formidable');
@@ -7,31 +8,73 @@ app=express();
 var filecounter=0;
 var db=[];
 
-//Database pages
+//Database packages
 var MongoClient=require('mongoose');
 var execfilemodel=require('./src/execfileschema');
 var initDb=require('./src/database').initDb;
 var getDb=require('./src/database').getDb;
 var userSchema=require('./src/userSchema');
 
+//validation packages
+var bcrypt=require('bcrypt');
+var saltRounds=10;
+
+
+//Authentication package
+var session=require('express-session');
+var passport=require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var Mongostore = require('connect-mongodb-session')(session);
+
+passport.use(new LocalStrategy(function(username,password,done){
+    console.log('in');
+    console.log(username);
+    console.log(password);
+    return done(null,'hsakhsk');
+}));
 
 //set the view engine to be ejs
 app.set('view engine', 'ejs');
+
 
 //creating a public directory to access specfic resourses
 var publicDir=require('path').join(__dirname,'/Public');
 app.use(express.static(publicDir));
 
-
 app.use(parser.urlencoded({  extended : false }));
 app.use(parser.json());
 
 
+//creating sessions in our backend
+var store=new Mongostore({
+    uri: 'mongodb://localhost:27017/execfiles',
+    collection: 'mySessions'
+},(err)=>{
+    console.log(err);
+})
+
+store.on('err',()=>{
+    console.log(err);
+})
+
+// using express sessions
+app.use(session({
+    secret: 'The coding queen',
+    resave: false,
+    store:store,
+    saveUninitialized: true
+}));
+
+// using passport for user authentication
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 
 //upload page route
-app.get('/',function(req,res){
+app.get('/',authenticationMiddleware(),function(req,res){
+    console.log(req.user);
+    console.log(req.isAuthenticated())
     res.render('UploadPage/uploadpage');
 });
 
@@ -66,15 +109,16 @@ app.get('/home',function(req,res){
     });
 });
 
+
 //login page route
 app.get('/login',function(req,res){
     res.render('Login/loginpage.ejs')
 });
 
 //authinticate user
-app.post('/auth',function(req,res){
-    //authticate username and password
-})
+app.post('/login', passport.authenticate('local',{ 
+    successRedirect:'/',
+    failureRedirect: '/home'}));
 
 //download route
 app.get('/download/:filepath/:id/:numD',function(req,res){
@@ -121,19 +165,40 @@ app.get('/MicrosoftOffice',function(req,res){
     })
 });
 
+
+
 //Register Page route
 app.get("/regeister",function(req,res){
     res.render('Login/RegisterPage.ejs');
 })
 
+//registering a user in the database
 app.post('/insertuser',function(req,res){
     var form=new formidable();
-    console.log('insert');
-    form.parse(req,function(err,fields){
-        insertUser(fields.UsernameInput,fields.pwd);
-        res.render('/home');
+    form.parse(req, async function(err,fields){
+        bcrypt.hash(fields.pwd, saltRounds, async function(err, hash) {
+            await insertUser(fields.UsernameInput,hash,fields.EmailInput);
+            userSchema.findOne({Username:fields.UsernameInput}).then((data)=>{
+                var username=data.Username;
+                console.log(username);
+                req.login(username,function(err){
+                    res.redirect('/');
+                })
+            }).catch((err)=>{
+                throw err;
+            })
+         
+          });
     })
 })
+
+passport.serializeUser(function(username, done) {
+    done(null, username);
+  });
+passport.deserializeUser(function(username, done) {
+        done(null, username);
+
+});
 
 // inserting a comment in the list
 app.post('/insertcomment/:id',function(req,res){
@@ -182,6 +247,12 @@ function queryId(id){
     return execfilemodel.find({_id:id});
 }
 
+
+function queryLogin(username){
+    console.log('login query')
+    return userSchema.find({Username: username});
+}
+
 //update the number of the downloads
 async function updateNumberOfDownloads(id,newnum){
 if(MongoClient.Types.ObjectId.isValid(id)){
@@ -211,13 +282,23 @@ function insertComment(id,Comment){
 }
 
 //user insertion
-function insertUser(username,password){
+function insertUser(username,password,email){
     let user=new userSchema({
         Username:username,
+        Email:email,
         Password:password
     })
 
     return user.save();
+}
+
+function authenticationMiddleware () {  
+	return (req, res, next) => {
+		console.log(`req.session.passport.user: ${JSON.stringify(req.session.passport)}`);
+
+	    if (req.isAuthenticated()) return next();
+	    res.redirect('/login')
+	}
 }
 
 //intializing the database connection and listing of the app's port (3000)
