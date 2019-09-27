@@ -26,7 +26,8 @@ var passport=require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var Mongostore = require('connect-mongodb-session')(session);
 
-passport.use(new LocalStrategy(function(username,password,done){
+passport.use(new LocalStrategy({usernameField:'Username',passwordField:'Password'},
+function(username,password,done){
     console.log('in');
     console.log(username);
     console.log(password);
@@ -116,9 +117,9 @@ app.get('/login',function(req,res){
 });
 
 //authinticate user
-app.post('/login', passport.authenticate('local',{ 
-    successRedirect:'/',
-    failureRedirect: '/home'}));
+// app.post('/login', passport.authenticate('local',{ 
+//     successRedirect:'/',
+//     failureRedirect: '/home'}));
 
 //download route
 app.get('/download/:filepath/:id/:numD',function(req,res){
